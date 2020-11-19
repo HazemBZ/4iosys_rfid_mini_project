@@ -3,7 +3,7 @@
 
 const char* ssid = "PLANET_007";
 const char* password = "hamatari";
-const char* mqttServer ="192.168.1.7";
+const char* mqttServer ="192.168.1.6";
 const int mqttPort = 1883;
 const char* mqttUser = "";
 const char* mqttPassword = "";
@@ -59,5 +59,5 @@ void setup() {
 void loop() {
   client.loop();
   client.publish("test_channel", "hello raspi channel");
-  delay(1000);
+  delay(2000);
 }

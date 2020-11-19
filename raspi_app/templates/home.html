@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ 
+    <title>My Webpage</title>
+</head>
+<body>
+
+    <h1>My Webpage</h1>
+    <ul id="list">
+      {% for msg in messages %}
+        <li>Topic: {{ msg.topic }} Payload: {{ msg.payload }}</li>
+      {% endfor %}
+    </ul>
+    <button onclick="get_amessage()">refresh</button>
+
+    {# a comment #}
+    <script src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>
+     
+  <script src="{{ url_for('static', filename='funs.js') }}">
+    
+  </script>
+</body>
+</html>
