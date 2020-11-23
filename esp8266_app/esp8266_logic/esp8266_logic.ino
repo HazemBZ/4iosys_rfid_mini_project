@@ -11,9 +11,9 @@ const char* ID = "123"; // suppose this is a uid
 const char* STATE = "I AM OK!->state"; // STATE struct mockup
 
 // CHANNELS
-const char* ADV_CHANNEL = "advertisement";
-const char* STATE_CHANNEL = "state/" + ID;
-const char* COMMAND_CHANNEL = "command/" + ID;
+const char* ADV_CHANNEL = "advertise";
+const char* STATE_CHANNEL = "state/123";  //"state/" + ID;
+const char* COMMAND_CHANNEL = "command/123";  //"command/" + ID;
 
 // client
 WiFiClient espClient;
@@ -33,7 +33,7 @@ void setup() {  // START SETUP
   client.setServer(mqttServer, mqttPort);
   client.setCallback(callback);
   
-  // connect to mqtt server
+  // CONNECT to mqtt server
   while(!client.connected()) { // Keep trying to connect
     Serial.println("Connecting to MQTT ...");
     if (client.connect("ESP8266Client", mqttUser, mqttPassword)) {
@@ -44,13 +44,14 @@ void setup() {  // START SETUP
       delay(2000);
     }
   }
-  const id
+
   //client.publish(ADV_CHANNEL, "123"); // publish once your id (last ip adresse byte) "suppose this is a unique string"
   client.subscribe(COMMAND_CHANNEL); // listen for commands in this channel
 
 } // --- END SETUP
 
-  // onMessage callback ( here filter and handle messages ) 
+  // HANDLE MESSAGES
+  //// onMessage callback ( here filter and handle messages ) 
   void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("Message arrived at topic: ");
     Serial.println(topic);
@@ -67,6 +68,7 @@ void setup() {  // START SETUP
 void loop() { // keep publishing state at regular intervals
   client.loop();
   client.publish(ADV_CHANNEL, ID); // for now keep sending ID
+  Serial.println("Published message TO ADV--");
   client.publish(STATE_CHANNEL, STATE);
   delay(2000);
 }
