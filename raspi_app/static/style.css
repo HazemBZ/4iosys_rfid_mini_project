@@ -64,12 +64,13 @@ div.tab {
 div.container {
   height:70%;
   width: 100%;
-  z-index: -1;
+  z-index: 10;
 }
 
 #refresh {
   position: relative;
   left: 50px;
+  z-index: 20;
 }
 
 .header {
