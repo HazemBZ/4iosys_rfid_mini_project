@@ -11,6 +11,7 @@ sudo systemctl enable mosquitto
 sudo systemctl start mosquitto
 python3 -m pip install -r requirements.txt // cd to raspi_app first
 ```
+#### Other setup
 
 **Configuration**
 
@@ -41,6 +42,12 @@ SERVER_IP= "127.0.0.1" // if running the web app on the pi
 SERVER_IP= "raspberry_ip" // if not
 ```
 
+raspi_app/static/funs.js
+```
+WEB_APP_IP="127.0.0.1"  // localhost if the web app runs on the pi
+WEB_APP_PORT="8884" // the port you are going to run the server on
+```
+
 esp8266_logic/esp8266_logic.ino
 ```
 const char* ssid = "your_network_SSID"; // Broker server Network
@@ -51,7 +58,7 @@ const char* mqttServer ="the_rasberry_ip";  // Broker ip (raspi)
 **run wep app**
 (from raspi_app)
 ```shell
-FLASK_APP=app.py flask run
+FLASK_APP=app.py flask run --host 0.0.0.0 --port <portnumber>
 ```
 
 
