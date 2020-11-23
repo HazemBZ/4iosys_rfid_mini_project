@@ -2,7 +2,7 @@ from time import sleep
 import paho.mqtt.client as mqtt
 
 
-MQTT_SERVER = "192.168.1.10"	# Change it to the IP of the broker server you are using (eg: Mosquitto)
+MQTT_SERVER = "192.168.1.6"	# Change it to the IP of the broker server you are using (eg: Mosquitto)
 MQTT_PORT = 1883	# default port
 ADV_PATH = "advertise"	# channel to which locker MCU will advertise their presence
 

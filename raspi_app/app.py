@@ -18,7 +18,9 @@ data_structs = []
 IDs = set()  # save unique ids 
 
 ## CONFIG
-SERVER_IP="192.168.1.10"
+MQTT_SERVER_IP="192.168.1.6"
+WEB_APP_SERVER_IP="localhost"
+PORT="8888"
 
 
 ## CHANNELS
@@ -28,9 +30,13 @@ STATE_ROOT = "state/"     # the same
 
 
 ## API endpoints
-ADV_END_POINT = "http://127.0.0.1:5000/advertisements"
+ADV_END_POINT = "http://{ip}:{port}/advertisements".format(port=PORT, ip=WEB_APP_SERVER_IP)
 
 ## Callback HELPER Functions
+
+def log_message(message):
+  global advertisements
+  advertisements.append(message)
 
 def handle_message(client, user_data, message):
   global IDs, STATE_ROOT
@@ -38,6 +44,7 @@ def handle_message(client, user_data, message):
   # print("Topic: {0} | Payload: {1}".format(message.topic, dpayload))
   # if from 'advertisement' channel => save id
   # if from 'state' channel => associate the state with its ID
+  log_message({"topic":message.topic, "payload":dpayload})
   if message.topic == ADV_CHANNEL:
     if dpayload not in IDs:
       IDs.add(dpayload)
@@ -67,7 +74,7 @@ def on_msg(client, user_data, message): ## filter messages here
 ## -------- CLIENT ---------
 # cl is the mqtt client agent 
 
-cl = clientlib.connect(SERVER_IP , on_con=on_con, on_msg=on_msg )
+cl = clientlib.connect(MQTT_SERVER_IP , on_con=on_con, on_msg=on_msg )
 print("connecting")
 cl.loop_start()
 
@@ -75,20 +82,21 @@ cl.loop_start()
 
 @app.route('/')
 def home():
-  global connected
+  global connected, advertisements
   
   print(connected)
-  messages = requests.get(ADV_END_POINT).json()
-  return render_template("home.html", messages=messages)
+  print("")
+  # messages = requests.get(ADV_END_POINT).json()
+  return render_template("home.html", messages=advertisements)
 
 ## DATA STRUCTURE
 # a message data structure has the following attributes: 'topic', 'payload', others
 @app.route('/advertisements')
 def messages_route():
-  global data_structs
-  messages = list(map(lambda x:{"topic":x["message"].topic, "payload":bytes.decode(x["message"].payload, "utf-8")}, data_structs))
-  print(messages)
-  return jsonify(messages)
+  global data_structs, advertisements
+  # messages = list(map(lambda x:{"topic":x["message"].topic, "payload":bytes.decode(x["message"].payload, "utf-8")}, data_structs))
+  print("GET /advertisements ", advertisements)
+  return jsonify(advertisements)
 
 @app.route('/advertisement/<id>')
 def one_message(id):

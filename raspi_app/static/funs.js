@@ -1,3 +1,9 @@
+// API END POINTS
+WEB_APP_IP="127.0.0.1"
+WEB_APP_PORT="8888"
+const ADV_ENDPOINT = `http://${WEB_APP_IP}:${WEB_APP_PORT}/advertisements`
+
+
 function add(sons) {
   console.log("adding ")
   let item = document.createElement('li')
@@ -5,7 +11,7 @@ function add(sons) {
   // document.getElementById("list").appendChild(item)
   console.log('sons', sons);
   $('#list').html('');
-  $.each(sons , (key,val)=> {$('#list').append("<li>"+"topic: "+val.topic + " payload: " + val.payload+"</li>"); console.log(val); console.log("topic", val.topic)})
+  $.each(sons , (key,val)=> {$('#list').append("<li>"+"Topic: "+val.topic + " Payload: " + val.payload+"</li>"); console.log(val); console.log("topic", val.topic)})
   // for (son in sons ){
   //   console.log(son)
   //   console.log("topic",son.topic)
@@ -16,7 +22,7 @@ function add(sons) {
 function get_amessage() {
   $.ajax({
       type: 'GET',
-      url: 'http://127.0.0.1:5000/messages',
+      url: ADV_ENDPOINT,
       // data: {get_param: 'value'},
       dataType: 'json',
       success: function (data) {
@@ -30,7 +36,7 @@ function get_amessage() {
 }
 // vanilla failed to parse data
 function get_messages(cb) {
-  let api = "http://127.0.0.1:5000/messages"
+  let api = ADV_ENDPOINT
   let xhttp = new XMLHttpRequest()
   xhttp.onreadystatechange = ()=> {
     if(xhttp.readyState === 4 && xhttp.status == 200){
