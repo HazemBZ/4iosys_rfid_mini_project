@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from raspi_app import clientlib
 from raspi_app import app
@@ -35,7 +35,7 @@ ADV_END_POINT = "http://127.0.0.1:5000/advertisements"
 def handle_message(client, user_data, message):
   global IDs, STATE_ROOT
   dpayload = bytes.decode(message.payload, 'utf-8')
-  print("Topic: {0} | Payload: {1}".format(message.topic, dpayload))
+  # print("Topic: {0} | Payload: {1}".format(message.topic, dpayload))
   # if from 'advertisement' channel => save id
   # if from 'state' channel => associate the state with its ID
   if message.topic == ADV_CHANNEL:
@@ -60,8 +60,8 @@ def on_con(client, user_data, flags, rc):
 def on_msg(client, user_data, message): ## filter messages here 
   global q_messages
   data_structs.append({"client":client, "user_data":user_data, "message":message})
-  print("--MQTT message--")
-  print(dir(message))
+  # print("--MQTT message--")
+  # print(dir(message))
   handle_message(client, user_data, message)
 
 ## -------- CLIENT ---------
@@ -103,7 +103,7 @@ def one_message(id):
 ## Commands to implement: open, close
 
 @app.route('/command/open')
-def open_commad():
+def open_command():
   global cl, COMMAND_ROOT
   id = request.args.get('id')
   COMMAND_PATH = COMMAND_ROOT + id
