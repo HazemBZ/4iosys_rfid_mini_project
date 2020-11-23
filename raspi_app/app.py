@@ -5,30 +5,46 @@ from raspi_app import app
 import json
 import requests
 
-cl = None
+cl = None  # global client obj
 app = Flask(__name__)
 CORS(app)
-data_structs = []
-connected = {}
-MESSAGES_END_POINT = "http://127.0.0.1:5000/messages"
 
-## helpers
+## STATES
+connected = {}
+
+## COM DATA
+advertisements = []
+data_structs = []
+
+## CONFIG
+SERVER_IP="192.168.1.6"
+
+
+## CHANNELS
+ADV_CHANNEL = "advertise"
+
+## API endpoints
+ADV_END_POINT = "http://127.0.0.1:5000/advertisements"
+
+## HELPER Functions
 
 def on_con(client, user_data, flags, rc):
   global connected, cl
   connected = {"user_data":user_data, "flags":flags, "rc":rc}
   print("on_connected")
   # print(connected)
-  client.subscribe("test_channel")
+  client.subscribe(ADV_CHANNEL)
   # cl = client
 
-def on_msg(client, user_data, message):
+def on_msg(client, user_data, message): ## filter messages here 
   global q_messages
-  data_structs.append({"user_data":user_data, "message":message})
+  data_structs.append({"client":client, "user_data":user_data, "message":message})
+  print("--MQTT message--")
+  dir(message)
 
 
 
-cl = clientl.connect("192.168.1.6" , on_con=on_con, on_msg=on_msg )
+cl = clientl.connect(SERVER_IP , on_con=on_con, on_msg=on_msg )
 print("connecting")
 cl.loop_start()
 
@@ -37,17 +53,17 @@ def home():
   global connected
   
   print(connected)
-  messages = requests.get(MESSAGES_END_POINT).json()
+  messages = requests.get(ADV_END_POINT).json()
   return render_template("home.html", messages=messages)
 
-@app.route('/messages')
+@app.route('/advertisements)
 def messages_route():
   global data_structs
   messages = list(map(lambda x:{"topic":x["message"].topic, "payload":bytes.decode(x["message"].payload, "utf-8")}, data_structs))
   print(messages)
   return jsonify(messages)
 
-@app.route('/message/<id>')
+@app.route('/advertisement/<id>')
 def one_message(id):
   global data_structs
   print(data_structs[int(id)-1]["message"])

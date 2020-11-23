@@ -2,14 +2,15 @@ from time import sleep
 import paho.mqtt.client as mqtt
 
 
-MQTT_SERVER = "192.168.1.6"
-MQTT_PORT = 1883
-MQTT_PATH = "test_channel"
+MQTT_SERVER = "192.168.1.10"	# Change it to the IP of the broker server you are using (eg: Mosquitto)
+MQTT_PORT = 1883	# default port
+ADV_PATH = "advertise"	# channel to which locker MCU will advertise their presence
 client = None
 # when the client receives a CONNACK response form the server
 def on_connect(client, userdata, flags, rc):
 	print("Connect wirth result code "+str(rc))
-	client.subscribe(MQTT_PATH) # if we lose the connection and reconnect the subscription will be renewed
+	client.subscribe(ADV_PATH) # if we lose the connection and reconnect the subscription will be renewed
+															# subscribe to esp32 
 	#while True:
 	#	client.publish("esp/data", "hello esp")
 	#	sleep(2)
