@@ -9,7 +9,7 @@ const int mqttPort = 1883;  // default MQTT port
 const char* mqttUser = "";  // no credentials for now
 const char* mqttPassword = "";  // no cred for now
 const char* ID = "123"; // suppose this is a uid 
-const char* STATE = "AOK"; // STATE struct mockup 'AOK' => all ok
+const char* STATE = "AOK"; // STATES: 'AOK' => all ok  | 'NOK' => not ok (maybe change to closed and open states)
 
 // CHANNELS
 const char* ADV_CHANNEL = "advertise";
@@ -81,16 +81,16 @@ void setup() {  // START SETUP
   }
 
 
-// lock opening implementation
+// --- OPEN LOCK LOGIC HERE ---
 void openLock(){
   Serial.print("=>  LOCK OPENED  <=");
 }
 
-
+const int PUBLISH_INTERVAL = 2000;
 void loop() { // keep publishing state at regular intervals
   client.loop();
   client.publish(ADV_CHANNEL, ID); // for now keep sending your ID
   // Serial.println("Published message TO ADV--");
   client.publish(STATE_CHANNEL, STATE); // keep sending state 
-  delay(2000);
+  delay(PUBLISH_INTERVAL);
 }

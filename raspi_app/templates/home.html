@@ -1,18 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- 
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>My Webpage</title>
 </head>
 <body>
+  <div class="wrapper">
+    <h1>Locker Home Page</h1>
+    <button id="refresh" onclick="get_amessage()">refresh</button>
+    
+  </div>
 
-    <h1>My Webpage</h1>
-    <ul id="list">
-      {% for msg in messages %}
-        <li>Topic: {{ msg.topic }} Payload: {{ msg.payload }}</li>
-      {% endfor %}
-    </ul>
-    <button onclick="get_amessage()">refresh</button>
+
+  
+  <div class="container">
+    <div class="tab">
+      <table >
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Payload</th>
+          </tr>
+        </thead>
+        <tbody style="height:100%" id="tab_body">
+          {% for msg in messages %}
+          <tr>
+            <td>{{msg.topic}}</td>
+            <td>{{msg.payload}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab">
+      <table >
+        <thead>
+          <tr>
+            <th>Lock</th>
+            <th>State</th>
+            <th>Commands</th>
+          </tr>
+        </thead>
+        <tbody style="height:100%" id="tab_body">
+          {% for state in states %}
+          <tr>
+            <td>{{state[0]}}</td>
+            <td>{{state[1]}}</td>
+            <td> <button id="{{state[0]}}" onclick="openLock(this)">Open</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
     {# a comment #}
     <script src="{{ url_for('static', filename='jquery-3.5.1.min.js') }}"></script>

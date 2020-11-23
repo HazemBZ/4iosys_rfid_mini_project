@@ -7,6 +7,7 @@ import requests
 
 cl = None  # global client obj
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 CORS(app)
 
 ## STATES
@@ -16,11 +17,12 @@ connected = {}
 advertisements = []
 data_structs = []
 IDs = set()  # save unique ids 
+states = {} # s
 
 ## CONFIG
 MQTT_SERVER_IP="192.168.1.6"
 WEB_APP_SERVER_IP="localhost"
-PORT="8888"
+PORT="8884"
 
 
 ## CHANNELS
@@ -39,7 +41,7 @@ def log_message(message):
   advertisements.append(message)
 
 def handle_message(client, user_data, message):
-  global IDs, STATE_ROOT
+  global IDs, STATE_ROOT, states
   dpayload = bytes.decode(message.payload, 'utf-8')
   # print("Topic: {0} | Payload: {1}".format(message.topic, dpayload))
   # if from 'advertisement' channel => save id
@@ -54,6 +56,7 @@ def handle_message(client, user_data, message):
   elif "state" in message.topic:
     id = message.topic.split('/')[1]
     print("ID: {0} REPORTED WITH STATE: {1}".format(id, dpayload))
+    states.update({id: dpayload})
 
 
 def on_con(client, user_data, flags, rc):
@@ -80,14 +83,27 @@ cl.loop_start()
 
 ## --------------------------
 
+# @app.after_request
+# def add_header(r):
+#     """
+#     Add headers to both force latest IE rendering engine or Chrome Frame,
+#     and also to cache the rendered page for 10 minutes.
+#     """
+#     r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+#     r.headers["Pragma"] = "no-cache"
+#     r.headers["Expires"] = "0"
+#     r.headers['Cache-Control'] = 'public, max-age=0'
+#     return r
+
+
 @app.route('/')
 def home():
-  global connected, advertisements
+  global connected, advertisements, states
   
   print(connected)
   print("")
   # messages = requests.get(ADV_END_POINT).json()
-  return render_template("home.html", messages=advertisements)
+  return render_template("home.html", messages=advertisements, states=list(states.items()))
 
 ## DATA STRUCTURE
 # a message data structure has the following attributes: 'topic', 'payload', others
@@ -117,7 +133,10 @@ def open_command():
   COMMAND_PATH = COMMAND_ROOT + id
   print("FROM: /command/open | COMMAND_PATH: %s".format(COMMAND_PATH))
   cl.publish(COMMAND_PATH, "OPEN")
+  return jsonify(states.get(id))
+
+## closing has to be manual
 
 
-  if __name__ == "__main__":
-    print("in main")
+if __name__ == "__main__":
+  print("in main")
