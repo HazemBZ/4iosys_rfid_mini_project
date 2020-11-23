@@ -1,5 +1,6 @@
 # include <ESP8266WiFi.h>
 # include <PubSubClient.h>
+#include <stdbool.h> 
 
 const char* ssid = "PLANET_007"; // Broker server Netwoek
 const char* password = "hamatari";  // Network pwd
@@ -8,7 +9,7 @@ const int mqttPort = 1883;  // default MQTT port
 const char* mqttUser = "";  // no credentials for now
 const char* mqttPassword = "";  // no cred for now
 const char* ID = "123"; // suppose this is a uid 
-const char* STATE = "I AM OK!->state"; // STATE struct mockup
+const char* STATE = "AOK"; // STATE struct mockup 'AOK' => all ok
 
 // CHANNELS
 const char* ADV_CHANNEL = "advertise";
@@ -57,18 +58,39 @@ void setup() {  // START SETUP
     Serial.println(topic);
 
     // print message
+    const char* str = "OPEN";
+    bool eq = true;
     Serial.print("Message:");
-    for (int i=0; i<length; i++) {
+    for (int i=0; i<length; i++) { // fucking c shit comparison
       Serial.print((char)payload[i]);
+      if ( (char)payload[i] != str[i]) { // checking for OPEN command
+        // Serial.print("Equals");
+        eq = false;
+      }
+      // strcat(str*, (char)payload[i]);
     }
+    if (eq) {
+      openLock();
+    }
+    Serial.print("In one conversion => ");
+    // String str = (char*) payload;
+    // char* str  = (char*)payload;
+    Serial.println(str);
     Serial.println();
     Serial.print("----------");
   }
 
+
+// lock opening implementation
+void openLock(){
+  Serial.print("=>  LOCK OPENED  <=");
+}
+
+
 void loop() { // keep publishing state at regular intervals
   client.loop();
-  client.publish(ADV_CHANNEL, ID); // for now keep sending ID
-  Serial.println("Published message TO ADV--");
-  client.publish(STATE_CHANNEL, STATE);
+  client.publish(ADV_CHANNEL, ID); // for now keep sending your ID
+  // Serial.println("Published message TO ADV--");
+  client.publish(STATE_CHANNEL, STATE); // keep sending state 
   delay(2000);
 }
