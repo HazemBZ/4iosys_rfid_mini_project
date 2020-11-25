@@ -2,9 +2,9 @@
 # include <PubSubClient.h>
 #include <stdbool.h> 
 
-const char* ssid = "PLANET_007"; // Broker server Netwoek
-const char* password = "hamatari";  // Network pwd
-const char* mqttServer ="192.168.1.6";  // Broker ip (raspi) 
+const char* ssid = "problem_technique"; // Broker server Netwoek
+const char* password = "esprit2020";  // Network pwd
+const char* mqttServer ="192.168.1.11";  // Broker ip (raspi) 
 const int mqttPort = 1883;  // default MQTT port 
 const char* mqttUser = "";  // no credentials for now
 const char* mqttPassword = "";  // no cred for now
