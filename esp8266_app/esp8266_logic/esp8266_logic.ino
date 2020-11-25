@@ -2,6 +2,7 @@
 # include <PubSubClient.h>
 #include <stdbool.h> 
 
+bool eq = true;
 const char* ssid = "problem_technique"; // Broker server Netwoek
 const char* password = "esprit2020";  // Network pwd
 const char* mqttServer ="192.168.1.11";  // Broker ip (raspi) 
@@ -20,7 +21,14 @@ const char* COMMAND_CHANNEL = "command/123";  //"command/" + ID;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+
+
+
+
+
 void setup() {  // START SETUP
+  pinMode(2, OUTPUT);
+  
   Serial.begin(9600);
   // wifi connection 
   WiFi.begin(ssid, password);
@@ -59,7 +67,7 @@ void setup() {  // START SETUP
 
     // print message
     const char* str = "OPEN";
-    bool eq = true;
+    
     Serial.print("Message:");
     for (int i=0; i<length; i++) { // fucking c shit comparison
       Serial.print((char)payload[i]);
@@ -81,8 +89,14 @@ void setup() {  // START SETUP
   }
 
 
+void ledOn() {
+         // wait for a 0.5 second
+}
+
+
 // --- OPEN LOCK LOGIC HERE ---
 void openLock(){
+  Serial.print("ITS ON");       
   Serial.print("=>  LOCK OPENED  <=");
 }
 
@@ -93,4 +107,8 @@ void loop() { // keep publishing state at regular intervals
   // Serial.println("Published message TO ADV--");
   client.publish(STATE_CHANNEL, STATE); // keep sending state 
   delay(PUBLISH_INTERVAL);
+   digitalWrite(2, HIGH);   // turn the LED on by making the pin 13 HIGH
+  delay(1000);              // wait for a 0.5 second
+  digitalWrite(2, LOW);    // turn the LED off by making the pin 13 LOW
+  delay(1000);  
 }
