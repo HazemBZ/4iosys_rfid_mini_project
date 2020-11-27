@@ -3,9 +3,10 @@
 #include <stdbool.h> 
 
 bool eq = true;
-const char* ssid = "problem_technique"; // Broker server Netwoek
-const char* password = "esprit2020";  // Network pwd
-const char* mqttServer ="192.168.1.11";  // Broker ip (raspi) 
+bool open_the_lock = false;
+const char* ssid = "ooredoo_709930"; // Broker server Netwoek
+const char* password = "SEIFSEIF";  // Network pwd
+const char* mqttServer ="192.168.1.41";  // Broker ip (raspi) 
 const int mqttPort = 1883;  // default MQTT port 
 const char* mqttUser = "";  // no credentials for now
 const char* mqttPassword = "";  // no cred for now
@@ -27,8 +28,8 @@ PubSubClient client(espClient);
 
 
 void setup() {  // START SETUP
-  pinMode(2, OUTPUT);
-  
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
   Serial.begin(9600);
   // wifi connection 
   WiFi.begin(ssid, password);
@@ -78,7 +79,7 @@ void setup() {  // START SETUP
       // strcat(str*, (char)payload[i]);
     }
     if (eq) {
-      openLock();
+      open_the_lock = true;
     }
     Serial.print("In one conversion => ");
     // String str = (char*) payload;
@@ -96,19 +97,29 @@ void ledOn() {
 
 // --- OPEN LOCK LOGIC HERE ---
 void openLock(){
+  
   Serial.print("ITS ON");       
   Serial.print("=>  LOCK OPENED  <=");
+  //digitalWrite(LED_BUILTIN, LOW);
+  //delay(1000);
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(500);
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
+  digitalWrite(LED_BUILTIN, LOW);
 }
 
 const int PUBLISH_INTERVAL = 2000;
 void loop() { // keep publishing state at regular intervals
+  if(open_the_lock) {
+    openLock();
+    open_the_lock = false;
+  }
   client.loop();
   client.publish(ADV_CHANNEL, ID); // for now keep sending your ID
   // Serial.println("Published message TO ADV--");
   client.publish(STATE_CHANNEL, STATE); // keep sending state 
   delay(PUBLISH_INTERVAL);
-   digitalWrite(2, HIGH);   // turn the LED on by making the pin 13 HIGH
-  delay(1000);              // wait for a 0.5 second
-  digitalWrite(2, LOW);    // turn the LED off by making the pin 13 LOW
-  delay(1000);  
 }
