@@ -153,7 +153,7 @@ def rfid_wrapper():
       id, text = reader.read()
       print("id: {0}; text: {1}".format(id, text))
       requests.get("localhost:{0}/command/open?id=123".format(PORT))
-      except e:
+      except Exception e:
         print(e.message())
       finally:
         GPIO.cleanup()
