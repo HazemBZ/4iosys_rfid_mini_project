@@ -9,6 +9,7 @@ sudo apt-get upgrade
 sudo apt-get install -y mosquitto mosquitto-clients
 sudo systemctl enable mosquitto
 sudo systemctl start mosquitto
+sudo apt install python3-pip
 python3 -m pip install -r requirements.txt // cd to raspi_app first
 ```
 #### Other setup
