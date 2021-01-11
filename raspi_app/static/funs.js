@@ -1,5 +1,5 @@
 // API END POINTS
-WEB_APP_IP="127.0.0.1"
+WEB_APP_IP="192.168.1.8"
 WEB_APP_PORT="8884"
 const ADV_ENDPOINT = `http://${WEB_APP_IP}:${WEB_APP_PORT}/advertisements`
 const OPEN_ENDPOINT = `http://${WEB_APP_IP}:${WEB_APP_PORT}/command/open`
