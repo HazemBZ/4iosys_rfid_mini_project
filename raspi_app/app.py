@@ -20,6 +20,7 @@ CORS(app)
 
 ## STATES
 connected = {}
+OPENED = False
 
 ## COM DATA
 advertisements = []
@@ -143,7 +144,20 @@ def open_command():
 		COMMAND_PATH = COMMAND_ROOT + id
 		print("FROM: /command/open | COMMAND_PATH: %s".format(COMMAND_PATH))
 		cl.publish(COMMAND_PATH, "OPEN")
-	return jsonify(states.get(id))
+		OPENED = True
+	return jsonify(states)#jsonify(states.get(id))
+
+@app.route('/command/close')
+def close_command():
+        global cl, COMMAND_ROOT, OPENED
+        if(OPENED):
+                id = request.args.get('id')
+                COMMAND_PATH = COMMAND_ROOT + id
+                print("FROM: /command/close | COMMAND_PATH: %s".format(COMMAND_PATH))
+                cl.publish(COMMAND_PATH, "CLOSE")
+                OPENED = False
+        return jsonify(states)
+
 
 ## closing has to be manual
 
