@@ -46,11 +46,11 @@ def flask_wrapper():
   ## Callback HELPER Functions
 
   def log_message(message):
-    global advertisements
+    #global advertisements
     advertisements.append(message)
 
   def handle_message(client, user_data, message):
-    global IDs, STATE_ROOT, states
+    #global IDs, STATE_ROOT, states
     dpayload = bytes.decode(message.payload, 'utf-8')
     # print("Topic: {0} | Payload: {1}".format(message.topic, dpayload))
     # if from 'advertisement' channel => save id
@@ -69,7 +69,7 @@ def flask_wrapper():
 
 
   def on_con(client, user_data, flags, rc):
-    global connected, cl
+    #global connected, cl
     connected = {"user_data":user_data, "flags":flags, "rc":rc}
     print("on_connected")
     # print(connected)
@@ -77,7 +77,7 @@ def flask_wrapper():
     # cl = client
 
   def on_msg(client, user_data, message): ## filter messages here 
-    global q_messages
+    #global q_messages
     data_structs.append({"client":client, "user_data":user_data, "message":message})
     # print("--MQTT message--")
     # print(dir(message))
@@ -107,7 +107,7 @@ def flask_wrapper():
 
   @app.route('/')
   def home():
-    global connected, advertisements, states
+    #global connected, advertisements, states
     
     print(connected)
     print("")
@@ -118,14 +118,14 @@ def flask_wrapper():
   # a message data structure has the following attributes: 'topic', 'payload', others
   @app.route('/advertisements')
   def messages_route():
-    global data_structs, advertisements
+    #global data_structs, advertisements
     # messages = list(map(lambda x:{"topic":x["message"].topic, "payload":bytes.decode(x["message"].payload, "utf-8")}, data_structs))
     print("GET /advertisements ", advertisements)
     return jsonify(advertisements)
 
   @app.route('/advertisement/<id>')
   def one_message(id):
-    global data_structs
+    #global data_structs
     print(data_structs[int(id)-1]["message"])
     message = data_structs[int(id)-1]["message"]
     #print(dir(message))
@@ -137,7 +137,7 @@ def flask_wrapper():
 
   @app.route('/command/open')
   def open_command():
-    global cl, COMMAND_ROOT
+    #global cl, COMMAND_ROOT
     id = request.args.get('id')
     COMMAND_PATH = COMMAND_ROOT + id
     print("FROM: /command/open | COMMAND_PATH: %s".format(COMMAND_PATH))
