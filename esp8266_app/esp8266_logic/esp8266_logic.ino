@@ -1,12 +1,16 @@
 # include <ESP8266WiFi.h>
 # include <PubSubClient.h>
 #include <stdbool.h> 
+#include "Servo.h"
 
-bool eq = true;
+
+//bool eq = true;
+//bool c_eq = true;
 bool open_the_lock = false;
-const char* ssid = "ooredoo_709930"; // Broker server Netwoek
-const char* password = "SEIFSEIF";  // Network pwd
-const char* mqttServer ="192.168.1.41";  // Broker ip (raspi) 
+bool close_the_lock = false;
+const char* ssid = "your_ssid"; // Broker server Netwoek
+const char* password = "your_pass";  // Network pwd
+const char* mqttServer ="your_server_ip";  // Broker ip (raspi) 
 const int mqttPort = 1883;  // default MQTT port 
 const char* mqttUser = "";  // no credentials for now
 const char* mqttPassword = "";  // no cred for now
@@ -23,11 +27,15 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 
-
+// SERVO
+Servo myservo;
+int servo_pin = 2;
+int angle = 0;
 
 
 
 void setup() {  // START SETUP
+  myservo.attach(servo_pin);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
   Serial.begin(9600);
@@ -63,13 +71,19 @@ void setup() {  // START SETUP
   // HANDLE MESSAGES
   //// onMessage callback ( here filter and handle messages ) 
   void callback(char* topic, byte* payload, unsigned int length) {
+    //bool eq = true;
+//bool c_eq = true;
     Serial.print("Message arrived at topic: ");
     Serial.println(topic);
+    bool eq = true;
+    bool c_eq = true;
 
     // print message
     const char* str = "OPEN";
+    const char* c_str = "CLOSE";
     
     Serial.print("Message:");
+    // OPEN MSG COMPARISON
     for (int i=0; i<length; i++) { // fucking c shit comparison
       Serial.print((char)payload[i]);
       if ( (char)payload[i] != str[i]) { // checking for OPEN command
@@ -81,6 +95,19 @@ void setup() {  // START SETUP
     if (eq) {
       open_the_lock = true;
     }
+    // CLOSE MSG COMPARISON
+    for (int i=0; i<length; i++) { // fucking c shit comparison
+      Serial.print((char)payload[i]);
+      if ( (char)payload[i] != c_str[i]) { // checking for OPEN command
+        // Serial.print("Equals");
+        c_eq = false;
+      }
+      // strcat(str*, (char)payload[i]);
+    }
+    if (c_eq) {
+      close_the_lock = true;
+      //c_eq = false;
+    }
     Serial.print("In one conversion => ");
     // String str = (char*) payload;
     // char* str  = (char*)payload;
@@ -90,17 +117,9 @@ void setup() {  // START SETUP
   }
 
 
-void ledOn() {
+void Blink() {
          // wait for a 0.5 second
-}
-
-
-// --- OPEN LOCK LOGIC HERE ---
-void openLock(){
-  
-  Serial.print("ITS ON");       
-  Serial.print("=>  LOCK OPENED  <=");
-  //digitalWrite(LED_BUILTIN, LOW);
+           //digitalWrite(LED_BUILTIN, LOW);
   //delay(1000);
   digitalWrite(LED_BUILTIN, HIGH);
   delay(500);
@@ -111,12 +130,45 @@ void openLock(){
   digitalWrite(LED_BUILTIN, LOW);
 }
 
+void closeLock(){
+  Blink();
+   //move from 180 to 0 degrees with a negative angle of 5
+  for(angle = 180; angle>=1; angle-=5)
+  {                                
+    myservo.write(angle);
+    delay(5);                       
+  } 
+      delay(1000);
+}
+
+// --- OPEN LOCK LOGIC HERE ---
+void openLock(){
+  
+  Serial.print("ITS ON");       
+  Serial.print("=>  LOCK OPENED  <=");
+  Blink();
+   //move from 0 to 180 degrees with a positive angle of 1
+  for(angle = 0; angle < 180; angle += 5)
+  {                          
+    myservo.write(angle);
+    delay(15);                       
+  } 
+
+  delay(1000);
+}
+
 const int PUBLISH_INTERVAL = 2000;
 void loop() { // keep publishing state at regular intervals
   if(open_the_lock) {
     openLock();
     open_the_lock = false;
   }
+
+  if(close_the_lock) {
+    closeLock();
+    close_the_lock = false;
+  }
+ 
   client.loop();
   client.publish(ADV_CHANNEL, ID); // for now keep sending your ID
   // Serial.println("Published message TO ADV--");
