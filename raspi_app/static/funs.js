@@ -1,9 +1,9 @@
 // API END POINTS
-WEB_APP_IP="127.0.0.1"
+WEB_APP_IP="192.168.1.8"
 WEB_APP_PORT="8884"
 const ADV_ENDPOINT = `http://${WEB_APP_IP}:${WEB_APP_PORT}/advertisements`
 const OPEN_ENDPOINT = `http://${WEB_APP_IP}:${WEB_APP_PORT}/command/open`
-
+const CLOSE_ENDPOINT = `http://${WEB_APP_IP}:${WEB_APP_PORT}/command/close`
 
 function add(sons) {
   console.log("adding ")
@@ -81,6 +81,20 @@ function openLock(btn) {
       // $.each(data, (key, val) => {console.log("key", key, "val", val); add(val)})
     }
   });
+}
+
+function closeLock(btn) {
+	let id = btn.getAttribute('id');
+	console.log(`got btn id ${id}`);
+	$.ajax({
+	type: 'GET',
+	url: CLOSE_ENDPOINT+"?id="+id,
+	dataType: 'json',
+	success: function (data) {
+	 var name = data;
+	 console.log(data);
+	}
+      });
 }
 
 // windown.setInterval(()=> {
