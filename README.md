@@ -9,6 +9,7 @@ sudo apt-get upgrade
 sudo apt-get install -y mosquitto mosquitto-clients
 sudo systemctl enable mosquitto
 sudo systemctl start mosquitto
+sudo apt install python3-pip
 python3 -m pip install -r requirements.txt // cd to raspi_app first
 ```
 #### Other setup
@@ -58,7 +59,7 @@ const char* mqttServer ="the_rasberry_ip";  // Broker ip (raspi)
 **run wep app**
 (from raspi_app)
 ```shell
-FLASK_APP=app.py flask run --host 0.0.0.0 --port <portnumber>
+FLASK_APP=app.py python3 -m flask run --host 0.0.0.0 --port <portnumber>
 ```
 
 
