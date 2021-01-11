@@ -59,7 +59,7 @@ const char* mqttServer ="the_rasberry_ip";  // Broker ip (raspi)
 **run wep app**
 (from raspi_app)
 ```shell
-FLASK_APP=app.py flask run --host 0.0.0.0 --port <portnumber>
+FLASK_APP=app.py python3 -m flask run --host 0.0.0.0 --port <portnumber>
 ```
 
 
